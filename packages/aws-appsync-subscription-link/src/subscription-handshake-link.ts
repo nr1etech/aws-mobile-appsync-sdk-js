@@ -2,8 +2,8 @@
  * Copyright 2017-2018 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-import { ApolloLink, Observable, Operation, FetchResult, ApolloError } from "@apollo/client/core";
-import * as ZenObservable from 'zen-observable-ts';
+import { ApolloLink, Observable, Operation, FetchResult } from "@apollo/client/core";
+import { GraphQLError } from "graphql";
 
 import { rootLogger } from "./utils";
 import * as Paho from './vendor/paho-mqtt';
@@ -33,7 +33,7 @@ type NewSubscriptions = {
 
 type ClientObservers = {
     client: any,
-    observers: Set<ZenObservable.Observer<any>>,
+    observers: Set<any>,
 }
 
 export const CONTROL_EVENTS_KEY = '@@controlEvents';
@@ -42,7 +42,7 @@ export class SubscriptionHandshakeLink extends ApolloLink {
 
     private subsInfoContextKey: string;
 
-    private topicObservers: Map<string, Set<ZenObservable.Observer<any>>> = new Map();
+    private topicObservers: Map<string, Set<any>> = new Map();
 
     private clientObservers: Map<string, ClientObservers> = new Map();
 
@@ -70,11 +70,24 @@ export class SubscriptionHandshakeLink extends ApolloLink {
 
         if (errors && errors.length) {
             return new Observable(observer => {
-                observer.error(new ApolloError({
-                    errorMessage: 'Error during subscription handshake',
-                    extraInfo: { errors },
-                    graphQLErrors: errors
-                }));
+                // In Apollo Client v4, we create GraphQLError instances directly
+                const graphQLErrors = errors.map(error => 
+                    error instanceof GraphQLError ? error : new GraphQLError(
+                        error.message || 'Error during subscription handshake',
+                        error.nodes,
+                        error.source,
+                        error.positions,
+                        error.path,
+                        error,
+                        error.extensions
+                    )
+                );
+                
+                observer.error({
+                    graphQLErrors,
+                    networkError: null,
+                    message: 'Error during subscription handshake'
+                });
 
                 return () => { };
             });
@@ -125,15 +138,10 @@ export class SubscriptionHandshakeLink extends ApolloLink {
                         .filter(([, observers]) => observers.size > 0)
                 );
             };
-        }).filter(data => {
-            const { extensions: { controlMsgType = undefined } = {} } = data;
-            const isControlMsg = typeof controlMsgType !== 'undefined';
-
-            return controlEvents === true || !isControlMsg;
         });
     }
 
-    async connectNewClients(connectionInfo: MqttConnectionInfo[], observer: ZenObservable.Observer<FetchResult>, operation: Operation) {
+    async connectNewClients(connectionInfo: MqttConnectionInfo[], observer: any, operation: Operation) {
         const { query } = operation;
         const selectionNames = (getMainDefinition(query).selectionSet.selections as FieldNode[]).map(({ name: { value } }) => value);
 
@@ -157,7 +165,7 @@ export class SubscriptionHandshakeLink extends ApolloLink {
         return result
     };
 
-    async connectNewClient(connectionInfo: MqttConnectionInfo, observer: ZenObservable.Observer<FetchResult>, selectionNames: string[]) {
+    async connectNewClient(connectionInfo: MqttConnectionInfo, observer: any, selectionNames: string[]) {
         const { client: clientId, url, topics } = connectionInfo;
         const client: any = new Paho.Client(url, clientId);
 
@@ -190,11 +198,11 @@ export class SubscriptionHandshakeLink extends ApolloLink {
         return client;
     }
 
-    subscribeToTopics<T>(client, topics: string[], observer: ZenObservable.Observer<T>) {
+    subscribeToTopics<T>(client, topics: string[], observer: any) {
         return Promise.all(topics.map(topic => this.subscribeToTopic(client, topic, observer)));
     }
 
-    subscribeToTopic<T>(client, topic: string, observer: ZenObservable.Observer<T>) {
+    subscribeToTopic<T>(client, topic: string, observer: any) {
         return new Promise((resolve, reject) => {
             (client as any).subscribe(topic, {
                 onSuccess: () => {

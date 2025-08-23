@@ -162,11 +162,6 @@ export class AppSyncRealTimeSubscriptionHandshakeLink extends ApolloLink {
           }
         };
       }
-    }).filter(data => {
-      const { extensions: { controlMsgType = undefined } = {} } = data;
-      const isControlMsg = typeof controlMsgType !== "undefined";
-
-      return controlEvents === true || !isControlMsg;
     });
   }
 

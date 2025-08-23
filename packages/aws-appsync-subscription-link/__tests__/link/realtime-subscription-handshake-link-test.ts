@@ -94,7 +94,7 @@ describe("RealTime subscription link", () => {
             url: 'https://apikeytesturl1234567890123.appsync-api.us-west-2.amazonaws.com/graphql'
         });
 
-        execute(link, { query }).subscribe({
+        execute(link, { query }, { client: null as any }).subscribe({
             error: (err) => {
                 console.log(JSON.stringify(err));
                 fail;
@@ -131,7 +131,7 @@ describe("RealTime subscription link", () => {
             url: 'https://apikeytest.testcustomdomain.com/graphql'
         });
 
-        execute(link, { query }).subscribe({
+        execute(link, { query }, { client: null as any }).subscribe({
             error: (err) => {
                 console.log(JSON.stringify(err));
                 fail;
@@ -168,7 +168,7 @@ describe("RealTime subscription link", () => {
             url: 'https://cognitouserpooltesturl1234.appsync-api.us-west-2.amazonaws.com/graphql'
         });
 
-        execute(link, { query }).subscribe({
+        execute(link, { query }, { client: null as any }).subscribe({
             error: (err) => {
                 console.log(JSON.stringify(err));
                 fail;
@@ -205,7 +205,7 @@ describe("RealTime subscription link", () => {
             url: 'https://cognitouserpools.testcustomdomain.com/graphql'
         });
 
-        execute(link, { query }).subscribe({
+        execute(link, { query }, { client: null as any }).subscribe({
             error: (err) => {
                 console.log(JSON.stringify(err));
                 fail;
@@ -242,7 +242,7 @@ describe("RealTime subscription link", () => {
             url: 'https://openidconnecttesturl123456.appsync-api.us-west-2.amazonaws.com/graphql'
         });
 
-        execute(link, { query }).subscribe({
+        execute(link, { query }, { client: null as any }).subscribe({
             error: (err) => {
                 console.log(JSON.stringify(err));
                 fail;
@@ -279,7 +279,7 @@ describe("RealTime subscription link", () => {
             url: 'https://openidconnecttesturl.testcustomdomain.com/graphql'
         });
 
-        execute(link, { query }).subscribe({
+        execute(link, { query }, { client: null as any }).subscribe({
             error: (err) => {
                 console.log(JSON.stringify(err));
                 fail;
@@ -316,7 +316,7 @@ describe("RealTime subscription link", () => {
             url: 'https://awslambdatesturl1234567890.appsync-api.us-west-2.amazonaws.com/graphql'
         });
 
-        execute(link, { query }).subscribe({
+        execute(link, { query }, { client: null as any }).subscribe({
             error: (err) => {
                 fail;
             },
@@ -350,7 +350,7 @@ describe("RealTime subscription link", () => {
             url: 'https://awslambdatesturl.testcustomdomain.com/graphql'
         });
 
-        execute(link, { query }).subscribe({
+        execute(link, { query }, { client: null as any }).subscribe({
             error: (err) => {
                 fail;
             },
@@ -425,7 +425,7 @@ describe("RealTime subscription link", () => {
         expect(link).toBeInstanceOf(AppSyncRealTimeSubscriptionHandshakeLink);
         expect((link as any).keepAliveTimeout).toBe(123456);
 
-        const sub = execute(link, { query }).subscribe({
+        const sub = execute(link, { query }, { client: null as any }).subscribe({
             error: (err) => {
                 console.log(JSON.stringify(err));
                 fail();
@@ -503,7 +503,7 @@ describe("RealTime subscription link", () => {
         expect(link).toBeInstanceOf(AppSyncRealTimeSubscriptionHandshakeLink);
         expect((link as any).keepAliveTimeout).toBeUndefined();
 
-        const sub = execute(link, { query }).subscribe({
+        const sub = execute(link, { query }, { client: null as any }).subscribe({
             error: (err) => {
                 console.log(JSON.stringify(err));
                 fail();

@@ -1,5 +1,4 @@
 import { AuthOptions } from "aws-appsync-auth-link";
-import * as ZenObservable from 'zen-observable-ts';
 
 //#region Subscription link enums
 
@@ -89,7 +88,7 @@ export type AppSyncRealTimeSubscriptionConfig = UrlInfo & {
 };
 
 export type ObserverQuery = {
-  observer: ZenObservable.SubscriptionObserver<any>;
+  observer: any;
   query: string;
   variables: object;
   subscriptionState: SUBSCRIPTION_STATUS;

@@ -26,7 +26,7 @@ describe("Auth link", () => {
         
         const testLink = ApolloLink.from([link, spyLink]);
 
-        execute(testLink, { query }).subscribe({ })
+        execute(testLink, { query }, { client: null as any }).subscribe({ })
     });
 
     test('Test AMAZON_COGNITO_USER_POOLS authorizer for queries', (done) => {
@@ -52,7 +52,7 @@ describe("Auth link", () => {
         
         const testLink = ApolloLink.from([link, spyLink]);
 
-        execute(testLink, { query }).subscribe({ })
+        execute(testLink, { query }, { client: null as any }).subscribe({ })
     });
 
     test('Test OPENID_CONNECT authorizer for queries', (done) => {
@@ -78,7 +78,7 @@ describe("Auth link", () => {
         
         const testLink = ApolloLink.from([link, spyLink]);
 
-        execute(testLink, { query }).subscribe({ })
+        execute(testLink, { query }, { client: null as any }).subscribe({ })
     });
 
     test('Test API_KEY authorizer for queries', (done) => {
@@ -105,6 +105,6 @@ describe("Auth link", () => {
         
         const testLink = ApolloLink.from([link, spyLink]);
 
-        execute(testLink, { query }).subscribe({ })
+        execute(testLink, { query }, { client: null as any }).subscribe({ })
     });
 });
